@@ -1,0 +1,19 @@
+# .NET build outputs
+**/bin/
+**/obj/
+**/TestResults/
+.vs/
+*.user
+*.suo
+packages/
+
+# Local logs and temporary files
+*.log
+*.tmp
+*.swp
+
+# Operating system and IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

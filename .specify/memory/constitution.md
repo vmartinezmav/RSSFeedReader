@@ -1,50 +1,89 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+Version change: unversioned template -> 1.0.0 (initial project-specific constitution)
+Modified principles: template placeholders replaced with five project-specific principles:
+	I. MVP Scope and Simplicity
+	II. Security and Data Handling
+	III. Maintainable Separation
+	IV. Verified Behavior and Code Quality
+	V. Incremental, Cross-Platform Delivery
+Added sections: Technology and Security Constraints; Development Workflow and Quality Gates.
+Removed sections: None.
+Follow-up TODO: Confirm the original ratification date; it is not recorded in the repository.
+-->
+# RSS Feed Reader Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. MVP Scope and Simplicity
+Implement only behavior approved for the current delivery phase. The MVP is limited to adding
+subscriptions by URL and displaying the subscription list; feed fetching, parsing, persistence,
+removal, and other deferred capabilities require explicit scope approval. Choose the smallest
+implementation that satisfies the approved behavior, and justify any added abstraction or dependency.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Security and Data Handling
+Treat user-provided URLs and all remote feed data as untrusted. The MVP MUST NOT make outbound feed
+requests. If fetching is approved for a later phase, the implementation MUST restrict permitted URL
+schemes and destinations, re-check redirects, bound request time and response size, parse XML
+securely, and render remote content as text or sanitize it before HTML rendering. Secrets MUST NOT
+be committed to source control or exposed to the browser.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Maintainable Separation
+Keep the ASP.NET Core Web API responsible for application and data operations and the Blazor
+WebAssembly frontend responsible for user interaction. Communicate through explicit, stable API
+contracts; keep environment-specific API addresses and allowed CORS origins in configuration.
+Prefer framework facilities and clear, testable components over duplicated logic or abstractions
+that do not serve an approved requirement.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Verified Behavior and Code Quality
+Changes MUST include automated tests for changed behavior and relevant regressions. Test API
+contracts and service behavior at the appropriate unit or integration boundary. Before a change is
+complete, the affected projects MUST build and their relevant tests MUST pass; failures MUST be
+resolved or explicitly recorded with an owner and rationale. Review code for correctness,
+readability, and consistency with these principles.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Incremental, Cross-Platform Delivery
+Deliver and verify the application in small increments that preserve the approved MVP boundary.
+Development and test workflows MUST avoid operating-system-specific assumptions where practical,
+and the frontend API configuration, backend listening address, and CORS policy MUST agree in each
+environment. Record deferred work rather than implementing it implicitly.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Technology and Security Constraints
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+The project uses an ASP.NET Core Web API backend and a Blazor WebAssembly frontend. For the MVP,
+subscriptions may be held in memory, and the application MUST provide adding a URL and listing
+subscriptions without fetching or parsing feeds. Frontend-to-backend communication MUST use the
+configured API base address; backend CORS MUST allow the configured frontend origin rather than
+relying on mismatched or implicit local ports.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+When feed fetching is approved, requests MUST defend against server-side request forgery, including
+loopback, private, link-local, and otherwise non-public destinations, including after redirects.
+Network operations MUST use bounded timeouts and response sizes. XML parsing MUST disable unsafe
+external entity resolution. Feed-provided markup MUST NOT be rendered as trusted HTML.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+## Development Workflow and Quality Gates
+
+Each change MUST identify the approved requirement and current delivery phase it serves. Changes
+that cross a phase boundary or add a deferred capability require explicit scope approval first.
+Before completion, run the build and relevant automated tests for each affected project. Changes
+to API behavior require coverage of the affected contract; changes to configuration or cross-origin
+communication require checking the corresponding frontend URL and backend CORS settings.
+
+Reviewers MUST check scope, security, maintainability, and test evidence. Any exception MUST be
+documented with its rationale, affected scope, and an owner responsible for resolution. Exceptions
+do not silently amend this constitution.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution governs project design, implementation, and review. Conflicting plans and local
+conventions MUST be brought into compliance or explicitly resolved through an approved amendment.
+Amendments require a documented rationale, review and approval by the project maintainer(s), an
+updated version and amendment date, and a Sync Impact Report describing affected principles,
+sections, and follow-up work. Reviews MUST assess compliance with this constitution and record
+approved exceptions as described above.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+Versioning follows semantic versioning: increment MAJOR for backward-incompatible governance or
+principle changes, MINOR for new principles or materially expanded requirements, and PATCH for
+clarifications and non-semantic edits.
+
+**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE): confirm original adoption date | **Last Amended**: 2026-10-08
